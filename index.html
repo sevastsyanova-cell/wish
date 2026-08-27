@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Калькулятор приоритетов — без иллюзий и самообмана</title>
+    <title>Калькулятор приоритетов</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Приоритеты" />
@@ -316,6 +316,8 @@
             align-items: center;
             justify-content: center;
             font-family: var(--font-body);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         .scale-buttons .scale-btn:hover {
             border-color: var(--gold-dark);
@@ -327,6 +329,9 @@
             color: #0d0d0f;
             transform: scale(1.05);
             box-shadow: 0 2px 12px rgba(212, 168, 83, 0.25);
+        }
+        .scale-buttons .scale-btn:active {
+            transform: scale(0.92);
         }
 
         /* ===== RESULT BLOCK ===== */
@@ -396,6 +401,8 @@
             font-family: var(--font-body);
             text-decoration: none;
             text-align: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         .btn:hover {
             background: var(--gold-light);
@@ -623,6 +630,7 @@
             padding: 4px 0;
             font-size: 14px;
             transition: var(--transition);
+            word-break: break-all;
         }
         .links-section a:hover {
             color: var(--gold);
@@ -727,6 +735,20 @@
             }
         }
 
+        @media (max-width: 400px) {
+            .scale-buttons .scale-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+            .wish-card .wish-input {
+                font-size: 16px;
+            }
+            .result-block .score {
+                font-size: 28px;
+            }
+        }
+
         /* ===== PRINT ===== */
         @media print {
             .hero .btn-scroll,
@@ -820,85 +842,55 @@
         </div>
     </section>
 
-    <!-- ═══════════ PAIN ═══════════ -->
+    <!-- ═══════════ CONTENT ═══════════ -->
     <section>
         <div class="container">
+
+            <!-- Знакомая ситуация? -->
             <div class="card animate-in">
                 <h3>Знакомая ситуация?</h3>
-                <p>Ты хочешь <strong>всё и сразу</strong>. Деньги, здоровье, отношения, самореализацию…</p>
+                <p>Ты хочешь всё и сразу. Деньги, здоровье, отношения, самореализацию…</p>
                 <div class="pain-quote">
                     «Я хочу много денег» — говорит голова.<br>
                     «Тебе нужен отдых» — шепчет подсознание.
                 </div>
                 <p>Эмоции могут вводить в заблуждение. А математика — никогда.</p>
             </div>
-        </div>
-    </section>
 
-    <!-- ═══════════ WHY ═══════════ -->
-    <section>
-        <div class="container">
-            <h2 class="animate-in">Почему «кажется» — плохой советчик?</h2>
-            <div class="comparison animate-in delay-1">
-                <div class="col emotion">
-                    <div class="label">😊 Эмоции</div>
-                    <p style="font-size:0.9rem;margin:6px 0;">«Кажется, это важно»</p>
-                    <p class="text-muted" style="margin-top:8px;">Обманывают, путают,<br>заставляют распыляться</p>
-                </div>
-                <div class="col math">
-                    <div class="label" style="color:var(--gold-light);">🧮 Математика</div>
-                    <p style="font-size:0.9rem;margin:6px 0;">Честные цифры</p>
-                    <p class="text-muted" style="margin-top:8px;">Твой внутренний голос<br>в сухих расчётах</p>
-                </div>
-            </div>
-            <p class="text-muted animate-in delay-2" style="text-align:center;margin-top:16px;">Когда знаешь, куда идти — тревога уходит.</p>
-        </div>
-    </section>
-
-    <!-- ═══════════ WHAT IS IT ═══════════ -->
-    <section>
-        <div class="container">
-            <div class="card highlight animate-in">
+            <!-- Что такое калькулятор приоритетов? -->
+            <div class="card highlight animate-in delay-1">
                 <h3>Что такое калькулятор приоритетов?</h3>
-                <p style="font-size:1.3rem;font-weight:600;color:var(--gold-light);margin:12px 0;">
+                <p style="font-size:1.2rem;font-weight:600;color:var(--gold-light);margin:12px 0;">
                     Это инструмент, который помогает услышать свой внутренний голос.
                 </p>
-                <p>Без медитаций, без гаданий. Простая математика и честные ответы на 3 вопроса.</p>
-                <p style="margin-top:12px;">Ты увидишь своими глазами, с какого желания начать <strong>прямо сегодня</strong>.</p>
+                <p>Без медитаций и гаданий. Простая математика и честные ответы на 3 вопроса.</p>
+                <p style="margin-top:12px;">Ты увидишь своими глазами, с какого желания начать прямо сегодня.</p>
 
                 <div style="margin-top:20px;padding:16px;background:var(--accent);border-radius:var(--radius-sm);border:1px solid var(--border);">
                     <p style="font-weight:600;margin-bottom:8px;color:var(--gold-light);">📋 Всего 3 шага:</p>
                     <ul style="list-style:none;padding:0;">
                         <li style="padding:4px 0;">✍️ <strong>Выпиши желания</strong> — всё, что хочешь реализовать прямо сейчас</li>
-                        <li style="padding:4px 0;">📊 <strong>Оцени по трём шкалам</strong> — честно, от 1 до 10</li>
-                        <li style="padding:4px 0;">🧮 <strong>Получи рейтинг</strong> — калькулятор сам всё посчитает</li>
+                        <li style="padding:4px 0;">📊 <strong>Оцени по шкале от 1 до 10</strong></li>
+                        <li style="padding:4px 0;">🧮 <strong>Получи рейтинг желаний</strong> — калькулятор сам всё посчитает</li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- ═══════════ RESULTS ═══════════ -->
-    <section>
-        <div class="container">
-            <h2 class="animate-in">Что ты получишь?</h2>
-            <div class="card animate-in delay-1">
+            <!-- Что ты получишь? -->
+            <div class="card animate-in delay-2">
+                <h3>Что ты получишь?</h3>
                 <ul class="results-list">
                     <li><strong>Ясность в целях</strong> — понимание, куда двигаться и с чего начинать</li>
                     <li><strong>Объективный рейтинг</strong> — эмоции обманывают, математика — нет</li>
-                    <li><strong>Готовый план действий</strong> — точно знаешь, что делать сегодня</li>
+                    <li><strong>Готовый план действий</strong> — точно знаешь, что делать уже сегодня</li>
                     <li><strong>Освобождение от «кажется»</strong> — перестаёшь тратить силы на чужое</li>
                     <li><strong>Спокойствие</strong> — когда знаешь, куда идти — тревога уходит</li>
                 </ul>
             </div>
-        </div>
-    </section>
 
-    <!-- ═══════════ REVIEWS ═══════════ -->
-    <section>
-        <div class="container">
-            <h2 class="animate-in">Что говорят те, кто знаком с инструментом</h2>
-            <div class="card animate-in delay-1">
+            <!-- Отзывы -->
+            <div class="card animate-in delay-2">
+                <h3>Что говорят те, кто знаком с инструментом</h3>
                 <div style="font-style:italic;font-size:1.05rem;padding:8px 0;border-bottom:1px solid var(--border);">
                     «Я в шоке! Желание, которое я загадала как самое большое, дало 0. А то, которое вообще не знала, как решить — набрало больше всех.»
                     <div style="font-style:normal;color:var(--text-muted);font-size:0.9rem;margin-top:4px;">— Участница вебинара</div>
@@ -912,23 +904,21 @@
                     <div style="font-style:normal;color:var(--text-muted);font-size:0.9rem;margin-top:4px;">— Мадам Татьяна</div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- ═══════════ EXAMPLE ═══════════ -->
-    <section>
-        <div class="container">
-            <h2 class="animate-in">🧮 Как это работает (пример)</h2>
+            <!-- Пример -->
             <div class="card animate-in delay-1">
+                <h3>🧮 Как это работает (пример)</h3>
                 <div style="overflow-x:auto;">
                     <table style="width:100%;border-collapse:collapse;font-size:14px;">
                         <thead>
                             <tr style="border-bottom:2px solid var(--gold-dark);">
                                 <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Желание</th>
-                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">😊 Счастье</th>
-                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">😢 Несчастье</th>
-                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">📌 Ситуация</th>
-                                <th style="text-align:center;padding:8px 6px;color:var(--gold-light);font-weight:700;">🎯 ИТОГ</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">Счастье</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">Несчастье</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">Сумма</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">Ситуация</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">Разрыв</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--gold-light);font-weight:700;">ИТОГ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -936,20 +926,26 @@
                                 <td style="padding:10px 6px;font-weight:500;">Купить дом</td>
                                 <td style="text-align:center;">9</td>
                                 <td style="text-align:center;">8</td>
+                                <td style="text-align:center;">17</td>
                                 <td style="text-align:center;">2</td>
+                                <td style="text-align:center;">8</td>
                                 <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">136 🔥</td>
                             </tr>
                             <tr style="border-bottom:1px solid var(--border);">
                                 <td style="padding:10px 6px;font-weight:500;">Выучить английский</td>
                                 <td style="text-align:center;">8</td>
                                 <td style="text-align:center;">9</td>
+                                <td style="text-align:center;">17</td>
                                 <td style="text-align:center;">3</td>
+                                <td style="text-align:center;">7</td>
                                 <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">119</td>
                             </tr>
                             <tr>
                                 <td style="padding:10px 6px;font-weight:500;">Доход 500к</td>
                                 <td style="text-align:center;">7</td>
                                 <td style="text-align:center;">6</td>
+                                <td style="text-align:center;">13</td>
+                                <td style="text-align:center;">5</td>
                                 <td style="text-align:center;">5</td>
                                 <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">65</td>
                             </tr>
@@ -959,10 +955,8 @@
                 <p style="margin-top:16px;text-align:center;font-size:1.05rem;color:var(--gold-light);">
                     ➡️ Твоё подсознание считает: <strong>«Купить дом — сейчас важнее всего»</strong>
                 </p>
-                <p style="text-align:center;color:var(--text-muted);font-style:italic;margin-top:4px;">
-                    136 — это не просто число. Это крик души. Или подсознания. Кто теперь разберёт… 🤷‍♀️
-                </p>
             </div>
+
         </div>
     </section>
 
@@ -971,7 +965,8 @@
         <div class="container">
             <h2 class="animate-in" style="text-align:center;">Попробуй прямо сейчас</h2>
             <p class="text-muted animate-in delay-1" style="text-align:center;margin-bottom:20px;">
-                5 минут — и ты знаешь, куда двигаться. Без воды и гаданий. Только цифры и твой внутренний голос.
+                5 минут — и ты знаешь, куда двигаться.<br>
+                Без воды и гаданий. Только цифры и твой внутренний голос.
             </p>
 
             <!-- ACTIONS -->
@@ -1018,13 +1013,21 @@
             <div class="links-section no-print">
                 <div class="links-title">🔗 Ещё инструменты</div>
                 <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank">
-                    🧹 Практика-разгрузка — «Как за 10 минут навести порядок в голове»
+                    🧹 Практика-разгрузка<br>
+                    «Как за 10 минут навести порядок в голове и выключить мыслемешалку»
                 </a>
                 <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank">
-                    📊 Авторизация результатов — «Зафиксируй свой прогресс»
+                    📊 Авторизация результатов<br>
+                    «Зафиксируй свой прогресс и отслеживай изменения»
                 </a>
                 <div class="author">
-                    💌 <strong>@katerinasevastsyanova</strong>
+                    💌 Если захочется сказать спасибо или поделиться мыслями:<br>
+                    <strong>@katerinasevastsyanova</strong> 💌
+                </div>
+                <div class="author" style="border-top: none; margin-top: 4px;">
+                    📬 Канал: <a href="https://t.me/vsemozhnomne" target="_blank">«Можно всё»</a><br>
+                    ▶️ YouTube: <a href="https://www.youtube.com/@ЕкатеринаСевостьянова_коуч" target="_blank">Екатерина Севостьянова_коуч</a><br>
+                    📚 ВКонтакте: <a href="https://vk.ru/whatever505" target="_blank">vk.ru/whatever505</a>
                 </div>
             </div>
         </div>
@@ -1033,9 +1036,10 @@
     <!-- ═══════════ FOOTER ═══════════ -->
     <footer style="text-align:center;padding:30px 24px;font-size:0.85rem;color:var(--text-muted);border-top:1px solid var(--border);">
         <div class="container">
-            <p>Катя • коуч, энерготерапевт, психолог для экспертов</p>
-            <p><a href="https://t.me/vsemozhnomne" target="_blank" rel="noopener" style="color:var(--gold-light);text-decoration:none;">Telegram: @vsemozhnomne</a></p>
-            <p style="margin-top:12px;opacity:0.5;">Узнай, чего ты хочешь на самом деле. Начни с главного.</p>
+            <p style="font-size:1.1rem;color:var(--gold-light);font-family:var(--font-heading);">
+                Узнай, чего ты хочешь на самом деле. Перестань тратить силы на чужое. Начни с главного.
+            </p>
+            <p style="margin-top:12px;">Этот проект бесплатный.</p>
         </div>
     </footer>
 
@@ -1498,9 +1502,7 @@
 
         console.log('🎯 Калькулятор приоритетов загружен!');
         console.log('💡 Ctrl+Enter — быстро добавить желание');
-        console.log('📊 Желаний:', wishes.length);
-        console.log('🔗 Ссылки на другие инструменты внизу страницы');
+        console.log('📱 На телефоне всё работает!');
     </script>
-
 </body>
 </html>

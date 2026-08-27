@@ -1,221 +1,226 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Калькулятор приоритетов</title>
+    <title>Калькулятор приоритетов — без иллюзий и самообмана</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Приоритеты" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230d0d0f' width='100' height='100' rx='20'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='%23d4a853'>🎯</text></svg>" />
     <style>
-        /* ===== RESET & BASE ===== */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
+        /* ===== ROOT ===== */
+        :root {
+            --bg: #0d0d0f;
+            --bg-card: #16161a;
+            --gold: #d4a853;
+            --gold-light: #e8c97a;
+            --gold-dark: #a07830;
+            --text: #e0ddd6;
+            --text-muted: #9d978b;
+            --border: #2a2822;
+            --accent: #1f1d18;
+            --font-heading: 'Georgia', 'Times New Roman', serif;
+            --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-
-        :root {
-            --bg: #f7f5f0;
-            --surface: #ffffff;
-            --text: #1e1e1e;
-            --text-muted: #666;
-            --border: #ddd;
-            --shadow: rgba(0, 0, 0, 0.06);
-            --accent: #2d7a5a;
-            --accent-light: #e6f2ed;
-            --accent-hover: #23694a;
-            --danger: #c0392b;
-            --danger-light: #fbe9e7;
-            --radius: 12px;
-            --transition: 0.25s ease;
-            --max-w: 820px;
-            --btn-scale: 0.96;
+        html {
+            scroll-behavior: smooth;
         }
-
-        [data-theme="dark"] {
-            --bg: #1a1a1e;
-            --surface: #26262b;
-            --text: #eee;
-            --text-muted: #aaa;
-            --border: #3a3a40;
-            --shadow: rgba(0, 0, 0, 0.4);
-            --accent: #4caf84;
-            --accent-light: #1e3a30;
-            --accent-hover: #5cbf94;
-            --danger: #e57373;
-            --danger-light: #3d1e1e;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 20px 16px 60px;
-            transition: background var(--transition), color var(--transition);
-            min-height: 100vh;
+            font-family: var(--font-body);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            color: #fff;
+        }
+        h2 {
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+            color: #fff;
+            margin-bottom: 0.5em;
+        }
+        h3 {
+            font-size: 1.2rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.6em;
+        }
+        .gold-text {
+            color: var(--gold-light);
+        }
+        .text-muted {
+            color: var(--text-muted);
+            font-size: 0.95rem;
         }
 
         .container {
-            max-width: var(--max-w);
+            max-width: 820px;
             margin: 0 auto;
+            padding: 0 24px;
+        }
+        section {
+            padding: 60px 0;
+            position: relative;
         }
 
-        /* ===== HEADER ===== */
-        .header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px 20px;
+        /* ===== HERO ===== */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            background: radial-gradient(ellipse at 50% 0%, rgba(180, 140, 70, 0.08) 0%, transparent 70%);
+        }
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            margin: 16px 0 32px;
+            font-style: italic;
+        }
+        .hero .btn-scroll {
+            display: inline-block;
+            color: var(--gold);
+            border: 1.5px solid var(--gold);
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            background: transparent;
+        }
+        .hero .btn-scroll:hover {
+            background: var(--gold);
+            color: #0d0d0f;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            margin-bottom: 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .card:hover::before {
+            opacity: 0.5;
+        }
+        .card.highlight {
+            border-color: var(--gold-dark);
+            box-shadow: 0 0 40px rgba(180, 140, 70, 0.06);
+        }
+        .card.centered {
+            text-align: center;
+        }
+
+        .pain-quote {
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--gold-dark);
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        /* ===== COMPARISON TABLE ===== */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 500px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        .comparison .col {
+            background: var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 24px 18px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .comparison .col.emotion {
+            border-top: 3px solid #c44;
+        }
+        .comparison .col.math {
+            border-top: 3px solid var(--gold);
+        }
+        .comparison .col .label {
+            font-weight: 700;
+            font-size: 1.1rem;
             margin-bottom: 8px;
         }
 
-        .header-left h1 {
-            font-size: 28px;
+        /* ===== RESULTS LIST ===== */
+        .results-list {
+            list-style: none;
+            padding: 0;
+        }
+        .results-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 1.02rem;
+        }
+        .results-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
             font-weight: 700;
-            letter-spacing: -0.3px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-left h1 span {
-            background: var(--accent);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 2px 12px;
-            border-radius: 40px;
-        }
-
-        .header-left .sub {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-top: 2px;
-        }
-
-        .header-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background var(--transition), transform 0.1s, box-shadow var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: #fff;
-            border-color: var(--danger);
-        }
-        .btn-danger:hover {
-            filter: brightness(1.08);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-        }
-
-        .btn-sm {
-            padding: 4px 12px;
-            font-size: 12px;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: #fff;
-            border-color: #27ae60;
-        }
-        .btn-success:hover {
-            background: #219a52;
-            border-color: #219a52;
-        }
-
-        /* ===== THEME TOGGLE ===== */
-        .theme-toggle {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 18px;
-            line-height: 1;
-            color: var(--text);
-            transition: background var(--transition);
-            min-width: 40px;
-        }
-        .theme-toggle:hover {
-            background: var(--border);
-        }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--surface);
-            color: var(--text);
-            padding: 12px 28px;
-            border-radius: 40px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border);
-            font-size: 15px;
-            opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            transform: translateX(-50%) translateY(20px);
-            pointer-events: none;
-            z-index: 1000;
-            font-weight: 500;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            font-size: 1.1rem;
         }
 
         /* ===== WISH CARD ===== */
         .wish-card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: 0 2px 12px var(--shadow);
-            padding: 20px 22px 18px;
-            margin-bottom: 20px;
-            transition: background var(--transition), box-shadow var(--transition);
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            position: relative;
+            border-radius: var(--radius);
+            padding: 24px 22px 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        .wish-card:hover {
+            border-color: var(--gold-dark);
         }
 
         .wish-card .card-header {
@@ -225,13 +230,13 @@
             margin-bottom: 14px;
             gap: 12px;
         }
-
         .wish-card .card-header .num {
             font-weight: 600;
             color: var(--text-muted);
             font-size: 14px;
+            font-family: var(--font-heading);
+            letter-spacing: 0.04em;
         }
-
         .wish-card .card-header .del-btn {
             background: transparent;
             border: none;
@@ -240,12 +245,12 @@
             font-size: 18px;
             padding: 2px 8px;
             border-radius: 6px;
-            transition: background var(--transition), color var(--transition);
+            transition: var(--transition);
             opacity: 0.3;
         }
         .wish-card .card-header .del-btn:hover {
-            background: var(--danger-light);
-            color: var(--danger);
+            background: rgba(196, 68, 68, 0.15);
+            color: #c44;
             opacity: 1;
         }
 
@@ -260,29 +265,29 @@
             transition: border-color var(--transition);
             font-weight: 500;
             margin-bottom: 18px;
+            font-family: var(--font-body);
         }
         .wish-card .wish-input:focus {
             outline: none;
-            border-bottom-color: var(--accent);
+            border-bottom-color: var(--gold);
         }
         .wish-card .wish-input::placeholder {
             color: var(--text-muted);
             font-weight: 400;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
-        /* вопросы */
+        /* ===== QUESTIONS ===== */
         .question-block {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
-
         .question-block .q-label {
             font-weight: 600;
             font-size: 15px;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            color: var(--gold-light);
         }
-
         .question-block .q-hint {
             font-size: 13px;
             color: var(--text-muted);
@@ -296,10 +301,9 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-
         .scale-buttons .scale-btn {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             border: 2px solid var(--border);
             background: var(--bg);
@@ -311,20 +315,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: var(--font-body);
         }
         .scale-buttons .scale-btn:hover {
-            border-color: var(--accent);
+            border-color: var(--gold-dark);
             transform: scale(1.05);
         }
         .scale-buttons .scale-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #0d0d0f;
             transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(45, 122, 90, 0.3);
+            box-shadow: 0 2px 12px rgba(212, 168, 83, 0.25);
         }
 
-        /* ===== РЕЗУЛЬТАТ КАРТОЧКИ ===== */
+        /* ===== RESULT BLOCK ===== */
         .result-block {
             margin-top: 18px;
             padding-top: 16px;
@@ -338,30 +343,29 @@
         .result-block .magic-title {
             font-size: 16px;
             font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 4px;
+            color: var(--gold-light);
+            margin-bottom: 2px;
+            font-family: var(--font-heading);
+            font-style: italic;
         }
 
         .result-block .score {
             font-size: 42px;
             font-weight: 800;
-            color: var(--accent);
-            margin: 6px 0 8px;
+            color: var(--gold);
+            margin: 4px 0 8px;
             letter-spacing: -1px;
-        }
-
-        .result-block .score .emoji-big {
-            font-size: 36px;
+            font-family: var(--font-heading);
         }
 
         .result-block .magic-text {
             font-size: 15px;
             color: var(--text);
             line-height: 1.6;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .result-block .magic-text .highlight {
-            color: var(--accent);
+            color: var(--gold-light);
             font-weight: 600;
         }
 
@@ -371,26 +375,82 @@
             margin-top: 4px;
             font-style: italic;
         }
-
         .result-block .shrug {
             font-size: 24px;
             margin-top: 2px;
         }
 
-        /* ===== КНОПКИ ДОБАВИТЬ / ПРИМЕР / ОЧИСТИТЬ ===== */
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            background: var(--gold);
+            color: #0d0d0f;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.02em;
+            font-family: var(--font-body);
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn:hover {
+            background: var(--gold-light);
+            box-shadow: 0 8px 30px rgba(212, 168, 83, 0.25);
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 24px;
+            font-size: 0.9rem;
+        }
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #0d0d0f;
+        }
+
+        .btn-danger-outline {
+            background: transparent;
+            border: 1.5px solid #c44;
+            color: #c44;
+            padding: 10px 24px;
+            font-size: 0.9rem;
+        }
+        .btn-danger-outline:hover {
+            background: #c44;
+            color: #0d0d0f;
+        }
+
+        .btn-block {
+            width: 100%;
+            display: block;
+        }
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 0.85rem;
+        }
+
         .actions-bar {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin: 12px 0 24px;
-            padding: 4px 0;
+            margin: 8px 0 20px;
         }
 
-        /* ===== РЕЙТИНГ ===== */
+        /* ===== RATING SECTION ===== */
         .rating-section {
-            background: var(--surface);
+            background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 20px 22px 18px;
+            padding: 24px 22px 20px;
             border: 1px solid var(--border);
             margin-top: 8px;
             display: none;
@@ -402,7 +462,9 @@
         .rating-section .rating-title {
             font-size: 20px;
             font-weight: 700;
+            font-family: var(--font-heading);
             margin-bottom: 12px;
+            color: #fff;
         }
 
         .rating-item {
@@ -410,7 +472,7 @@
             align-items: center;
             gap: 12px;
             padding: 10px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
         .rating-item:last-child {
             border-bottom: none;
@@ -427,9 +489,10 @@
         .rating-item .r-score {
             font-weight: 700;
             font-size: 18px;
-            color: var(--accent);
+            color: var(--gold-light);
             min-width: 60px;
             text-align: right;
+            font-family: var(--font-heading);
         }
         .rating-item .r-fire {
             font-size: 18px;
@@ -440,18 +503,18 @@
         .rating-section .advice {
             margin-top: 14px;
             padding: 14px 18px;
-            background: var(--accent-light);
-            border-radius: var(--radius);
-            border-left: 4px solid var(--accent);
+            background: rgba(212, 168, 83, 0.06);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--gold);
             font-size: 15px;
         }
         .rating-section .advice strong {
-            color: var(--accent);
+            color: var(--gold-light);
         }
 
-        /* ===== ПОДЕЛИТЬСЯ ===== */
+        /* ===== SHARE SECTION ===== */
         .share-section {
-            background: var(--surface);
+            background: var(--bg-card);
             border-radius: var(--radius);
             padding: 18px 22px 20px;
             border: 1px solid var(--border);
@@ -466,6 +529,7 @@
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 12px;
+            color: var(--gold-light);
         }
 
         .share-buttons {
@@ -474,11 +538,75 @@
             gap: 10px;
         }
 
-        /* ===== ССЫЛКИ НА ДРУГИЕ ИНСТРУМЕНТЫ ===== */
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--bg-card);
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            font-size: 0.95rem;
+            pointer-events: none;
+            font-family: var(--font-body);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 32px 28px 24px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .modal-box h3 {
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .modal-box p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* ===== LINKS / FOOTER ===== */
         .links-section {
             margin-top: 30px;
-            padding: 18px 22px;
-            background: var(--surface);
+            padding: 20px 22px;
+            background: var(--bg-card);
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
@@ -486,15 +614,18 @@
             font-weight: 600;
             font-size: 15px;
             margin-bottom: 8px;
+            color: var(--gold-light);
         }
         .links-section a {
-            color: var(--accent);
+            color: var(--gold-light);
             text-decoration: none;
             display: block;
             padding: 4px 0;
             font-size: 14px;
+            transition: var(--transition);
         }
         .links-section a:hover {
+            color: var(--gold);
             text-decoration: underline;
         }
         .links-section .author {
@@ -513,7 +644,7 @@
             text-align: center;
             padding: 40px 20px;
             color: var(--text-muted);
-            background: var(--surface);
+            background: var(--bg-card);
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
@@ -522,64 +653,56 @@
             margin-bottom: 12px;
         }
         .empty-state h3 {
-            color: var(--text);
+            color: #fff;
             margin-bottom: 6px;
         }
         .empty-state p {
             font-size: 15px;
         }
 
-        /* ===== MODAL (confirm) ===== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .modal-overlay.active {
-            display: flex;
+        .animate-in {
+            animation: fadeInUp 0.7s ease forwards;
+            opacity: 0;
         }
-
-        .modal-box {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 32px 28px 24px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            text-align: center;
+        .delay-1 {
+            animation-delay: 0.1s;
         }
-        .modal-box h3 {
-            margin-bottom: 8px;
+        .delay-2 {
+            animation-delay: 0.25s;
         }
-        .modal-box p {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
+        .delay-3 {
+            animation-delay: 0.4s;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
-            .header-left h1 {
-                font-size: 22px;
-                flex-wrap: wrap;
+            section {
+                padding: 40px 0;
+            }
+            .hero {
+                padding: 50px 0 40px;
+            }
+            .card {
+                padding: 24px 16px;
             }
             .wish-card {
-                padding: 16px 14px 14px;
+                padding: 18px 14px 16px;
             }
             .scale-buttons .scale-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
             }
             .result-block .score {
                 font-size: 32px;
@@ -590,22 +713,25 @@
             }
             .share-buttons .btn {
                 font-size: 13px;
-                padding: 6px 14px;
+                padding: 8px 16px;
             }
             .actions-bar .btn {
                 font-size: 13px;
-                padding: 6px 14px;
+                padding: 8px 16px;
             }
             .question-block .q-label {
                 font-size: 14px;
             }
+            .comparison {
+                grid-template-columns: 1fr;
+            }
         }
 
+        /* ===== PRINT ===== */
         @media print {
-            .header-actions,
+            .hero .btn-scroll,
             .actions-bar,
             .share-section .share-buttons,
-            .theme-toggle,
             .no-print,
             .del-btn {
                 display: none !important;
@@ -613,20 +739,28 @@
             body {
                 background: #fff !important;
                 color: #000 !important;
-                padding: 10px !important;
+            }
+            .card,
+            .wish-card,
+            .rating-section,
+            .share-section,
+            .links-section,
+            .empty-state {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
             }
             .wish-card {
-                box-shadow: none !important;
-                border: 1px solid #ccc !important;
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
             .scale-btn {
                 border: 1px solid #aaa !important;
                 background: #f5f5f5 !important;
+                color: #000 !important;
             }
             .scale-btn.active {
-                background: #2d7a5a !important;
+                background: #d4a853 !important;
                 color: #fff !important;
             }
             .result-block {
@@ -634,107 +768,285 @@
             }
             .rating-section {
                 display: block !important;
-                border: 1px solid #ccc !important;
             }
             .share-section {
                 display: none !important;
             }
-            .links-section {
-                border: 1px solid #ccc !important;
+            .gold-text,
+            .gold-text * {
+                color: #a07830 !important;
             }
-            [data-theme="dark"] .wish-card {
-                border-color: #000 !important;
+            .text-muted {
+                color: #666 !important;
             }
-            [data-theme="dark"] .rating-section {
-                border-color: #000 !important;
+            .hero .subtitle {
+                color: #a07830 !important;
             }
-            .empty-state {
-                border: 1px solid #ccc !important;
+            .rating-item .r-score {
+                color: #a07830 !important;
+            }
+            .result-block .score {
+                color: #a07830 !important;
+            }
+            .result-block .magic-title {
+                color: #a07830 !important;
+            }
+            .links-section a {
+                color: #a07830 !important;
+            }
+            .rating-section .advice strong {
+                color: #a07830 !important;
+            }
+            .question-block .q-label {
+                color: #a07830 !important;
+            }
+            .wish-card .wish-input {
+                border-bottom-color: #aaa !important;
+                color: #000 !important;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="toast" id="toast"></div>
 
-        <!-- TOAST -->
-        <div class="toast" id="toast"></div>
-
-        <!-- HEADER -->
-        <header class="header">
-            <div class="header-left">
-                <h1>
-                    🎯 Калькулятор приоритетов
-                    <span>v1</span>
-                </h1>
-                <div class="sub">«Без иллюзий и самообмана»</div>
-            </div>
-            <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" title="Переключить тему">🌙</button>
-            </div>
-        </header>
-
-        <!-- ACTIONS -->
-        <div class="actions-bar no-print">
-            <button class="btn btn-primary" id="addBtn">➕ Добавить желание</button>
-            <button class="btn btn-outline" id="exampleBtn">📋 Пример</button>
-            <button class="btn btn-danger" id="clearBtn">🗑 Очистить всё</button>
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="animate-in">🎯 Калькулятор приоритетов</h1>
+            <p class="subtitle animate-in delay-1">«Без иллюзий и самообмана»</p>
+            <a href="#tool" class="btn-scroll animate-in delay-2">Попробовать ↓</a>
         </div>
+    </section>
 
-        <!-- WISHES CONTAINER -->
-        <div id="wishesContainer"></div>
-
-        <!-- EMPTY STATE (показывается через JS) -->
-        <div class="empty-state" id="emptyState">
-            <div class="big">✨</div>
-            <h3>Нет желаний</h3>
-            <p>Нажми «➕ Добавить желание» или «📋 Пример», чтобы начать</p>
-        </div>
-
-        <!-- RATING SECTION -->
-        <div class="rating-section" id="ratingSection">
-            <div class="rating-title">📊 Твой рейтинг желаний</div>
-            <div id="ratingList"></div>
-            <div class="advice" id="adviceBlock">
-                💡 Совет: начни с <strong id="adviceWish">...</strong> — у него самый высокий приоритет
+    <!-- ═══════════ PAIN ═══════════ -->
+    <section>
+        <div class="container">
+            <div class="card animate-in">
+                <h3>Знакомая ситуация?</h3>
+                <p>Ты хочешь <strong>всё и сразу</strong>. Деньги, здоровье, отношения, самореализацию…</p>
+                <div class="pain-quote">
+                    «Я хочу много денег» — говорит голова.<br>
+                    «Тебе нужен отдых» — шепчет подсознание.
+                </div>
+                <p>Эмоции могут вводить в заблуждение. А математика — никогда.</p>
             </div>
         </div>
+    </section>
 
-        <!-- SHARE SECTION -->
-        <div class="share-section no-print" id="shareSection">
-            <div class="share-title">📤 Поделиться результатом</div>
-            <div class="share-buttons">
-                <button class="btn btn-outline" id="shareCopy">📋 Копировать всё</button>
-                <button class="btn btn-outline" id="shareSelf">📱 Переслать себе</button>
-                <button class="btn btn-outline" id="shareKate">👩‍💼 Переслать Кате</button>
+    <!-- ═══════════ WHY ═══════════ -->
+    <section>
+        <div class="container">
+            <h2 class="animate-in">Почему «кажется» — плохой советчик?</h2>
+            <div class="comparison animate-in delay-1">
+                <div class="col emotion">
+                    <div class="label">😊 Эмоции</div>
+                    <p style="font-size:0.9rem;margin:6px 0;">«Кажется, это важно»</p>
+                    <p class="text-muted" style="margin-top:8px;">Обманывают, путают,<br>заставляют распыляться</p>
+                </div>
+                <div class="col math">
+                    <div class="label" style="color:var(--gold-light);">🧮 Математика</div>
+                    <p style="font-size:0.9rem;margin:6px 0;">Честные цифры</p>
+                    <p class="text-muted" style="margin-top:8px;">Твой внутренний голос<br>в сухих расчётах</p>
+                </div>
+            </div>
+            <p class="text-muted animate-in delay-2" style="text-align:center;margin-top:16px;">Когда знаешь, куда идти — тревога уходит.</p>
+        </div>
+    </section>
+
+    <!-- ═══════════ WHAT IS IT ═══════════ -->
+    <section>
+        <div class="container">
+            <div class="card highlight animate-in">
+                <h3>Что такое калькулятор приоритетов?</h3>
+                <p style="font-size:1.3rem;font-weight:600;color:var(--gold-light);margin:12px 0;">
+                    Это инструмент, который помогает услышать свой внутренний голос.
+                </p>
+                <p>Без медитаций, без гаданий. Простая математика и честные ответы на 3 вопроса.</p>
+                <p style="margin-top:12px;">Ты увидишь своими глазами, с какого желания начать <strong>прямо сегодня</strong>.</p>
+
+                <div style="margin-top:20px;padding:16px;background:var(--accent);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                    <p style="font-weight:600;margin-bottom:8px;color:var(--gold-light);">📋 Всего 3 шага:</p>
+                    <ul style="list-style:none;padding:0;">
+                        <li style="padding:4px 0;">✍️ <strong>Выпиши желания</strong> — всё, что хочешь реализовать прямо сейчас</li>
+                        <li style="padding:4px 0;">📊 <strong>Оцени по трём шкалам</strong> — честно, от 1 до 10</li>
+                        <li style="padding:4px 0;">🧮 <strong>Получи рейтинг</strong> — калькулятор сам всё посчитает</li>
+                    </ul>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- LINKS -->
-        <div class="links-section no-print">
-            <div class="links-title">🔗 Ещё инструменты</div>
-            <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank">
-                🧹 Практика-разгрузка — «Как за 10 минут навести порядок в голове»
-            </a>
-            <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank">
-                📊 Авторизация результатов — «Зафиксируй свой прогресс»
-            </a>
-            <div class="author">
-                💌 <strong>@katerinasevastsyanova</strong>
+    <!-- ═══════════ RESULTS ═══════════ -->
+    <section>
+        <div class="container">
+            <h2 class="animate-in">Что ты получишь?</h2>
+            <div class="card animate-in delay-1">
+                <ul class="results-list">
+                    <li><strong>Ясность в целях</strong> — понимание, куда двигаться и с чего начинать</li>
+                    <li><strong>Объективный рейтинг</strong> — эмоции обманывают, математика — нет</li>
+                    <li><strong>Готовый план действий</strong> — точно знаешь, что делать сегодня</li>
+                    <li><strong>Освобождение от «кажется»</strong> — перестаёшь тратить силы на чужое</li>
+                    <li><strong>Спокойствие</strong> — когда знаешь, куда идти — тревога уходит</li>
+                </ul>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- ═══════════ REVIEWS ═══════════ -->
+    <section>
+        <div class="container">
+            <h2 class="animate-in">Что говорят те, кто знаком с инструментом</h2>
+            <div class="card animate-in delay-1">
+                <div style="font-style:italic;font-size:1.05rem;padding:8px 0;border-bottom:1px solid var(--border);">
+                    «Я в шоке! Желание, которое я загадала как самое большое, дало 0. А то, которое вообще не знала, как решить — набрало больше всех.»
+                    <div style="font-style:normal;color:var(--text-muted);font-size:0.9rem;margin-top:4px;">— Участница вебинара</div>
+                </div>
+                <div style="font-style:italic;font-size:1.05rem;padding:12px 0;border-bottom:1px solid var(--border);">
+                    «Логика потрясающая! Хочу адаптировать это для себя и использовать в работе с клиентами.»
+                    <div style="font-style:normal;color:var(--text-muted);font-size:0.9rem;margin-top:4px;">— Екатерина, коуч</div>
+                </div>
+                <div style="font-style:italic;font-size:1.05rem;padding:12px 0;">
+                    «Невозможно подтасовать результат. Это чистая математика твоего подсознания.»
+                    <div style="font-style:normal;color:var(--text-muted);font-size:0.9rem;margin-top:4px;">— Мадам Татьяна</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- MODAL -->
+    <!-- ═══════════ EXAMPLE ═══════════ -->
+    <section>
+        <div class="container">
+            <h2 class="animate-in">🧮 Как это работает (пример)</h2>
+            <div class="card animate-in delay-1">
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                        <thead>
+                            <tr style="border-bottom:2px solid var(--gold-dark);">
+                                <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Желание</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">😊 Счастье</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">😢 Несчастье</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--text-muted);font-weight:600;">📌 Ситуация</th>
+                                <th style="text-align:center;padding:8px 6px;color:var(--gold-light);font-weight:700;">🎯 ИТОГ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:10px 6px;font-weight:500;">Купить дом</td>
+                                <td style="text-align:center;">9</td>
+                                <td style="text-align:center;">8</td>
+                                <td style="text-align:center;">2</td>
+                                <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">136 🔥</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:10px 6px;font-weight:500;">Выучить английский</td>
+                                <td style="text-align:center;">8</td>
+                                <td style="text-align:center;">9</td>
+                                <td style="text-align:center;">3</td>
+                                <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">119</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 6px;font-weight:500;">Доход 500к</td>
+                                <td style="text-align:center;">7</td>
+                                <td style="text-align:center;">6</td>
+                                <td style="text-align:center;">5</td>
+                                <td style="text-align:center;color:var(--gold-light);font-weight:700;font-size:18px;">65</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top:16px;text-align:center;font-size:1.05rem;color:var(--gold-light);">
+                    ➡️ Твоё подсознание считает: <strong>«Купить дом — сейчас важнее всего»</strong>
+                </p>
+                <p style="text-align:center;color:var(--text-muted);font-style:italic;margin-top:4px;">
+                    136 — это не просто число. Это крик души. Или подсознания. Кто теперь разберёт… 🤷‍♀️
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ TOOL ═══════════ -->
+    <section id="tool">
+        <div class="container">
+            <h2 class="animate-in" style="text-align:center;">Попробуй прямо сейчас</h2>
+            <p class="text-muted animate-in delay-1" style="text-align:center;margin-bottom:20px;">
+                5 минут — и ты знаешь, куда двигаться. Без воды и гаданий. Только цифры и твой внутренний голос.
+            </p>
+
+            <!-- ACTIONS -->
+            <div class="actions-bar no-print animate-in delay-2">
+                <button class="btn" id="addBtn">➕ Добавить желание</button>
+                <button class="btn btn-outline" id="exampleBtn">📋 Пример</button>
+                <button class="btn btn-danger-outline" id="clearBtn">🗑 Очистить всё</button>
+            </div>
+
+            <!-- WISHES CONTAINER -->
+            <div id="wishesContainer"></div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-state" id="emptyState">
+                <div class="big">✨</div>
+                <h3>Нет желаний</h3>
+                <p>Нажми «➕ Добавить желание» или «📋 Пример», чтобы начать</p>
+            </div>
+
+            <!-- RATING SECTION -->
+            <div class="rating-section" id="ratingSection">
+                <div class="rating-title">📊 Твой рейтинг желаний</div>
+                <div id="ratingList"></div>
+                <div class="advice" id="adviceBlock">
+                    💡 Совет: начни с <strong id="adviceWish">...</strong> — у него самый высокий приоритет
+                </div>
+            </div>
+
+            <!-- SHARE SECTION -->
+            <div class="share-section no-print" id="shareSection">
+                <div class="share-title">📤 Поделиться результатом</div>
+                <div class="share-buttons">
+                    <button class="btn btn-outline" id="shareCopy">📋 Копировать всё</button>
+                    <button class="btn btn-outline" id="shareSelf">📱 Переслать себе</button>
+                    <button class="btn btn-outline" id="shareKate">👩‍💼 Переслать Кате</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ LINKS ═══════════ -->
+    <section>
+        <div class="container">
+            <div class="links-section no-print">
+                <div class="links-title">🔗 Ещё инструменты</div>
+                <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank">
+                    🧹 Практика-разгрузка — «Как за 10 минут навести порядок в голове»
+                </a>
+                <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank">
+                    📊 Авторизация результатов — «Зафиксируй свой прогресс»
+                </a>
+                <div class="author">
+                    💌 <strong>@katerinasevastsyanova</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer style="text-align:center;padding:30px 24px;font-size:0.85rem;color:var(--text-muted);border-top:1px solid var(--border);">
+        <div class="container">
+            <p>Катя • коуч, энерготерапевт, психолог для экспертов</p>
+            <p><a href="https://t.me/vsemozhnomne" target="_blank" rel="noopener" style="color:var(--gold-light);text-decoration:none;">Telegram: @vsemozhnomne</a></p>
+            <p style="margin-top:12px;opacity:0.5;">Узнай, чего ты хочешь на самом деле. Начни с главного.</p>
+        </div>
+    </footer>
+
+    <!-- ═══════════ MODAL ═══════════ -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-box">
             <h3>⚠️ Очистить всё?</h3>
             <p>Все желания и оценки будут удалены безвозвратно.</p>
             <div class="modal-actions">
                 <button class="btn btn-outline" id="modalCancel">Отмена</button>
-                <button class="btn btn-danger" id="modalConfirm">Да, очистить</button>
+                <button class="btn" id="modalConfirm" style="background:#c44;color:#fff;">Да, очистить</button>
             </div>
         </div>
     </div>
@@ -760,7 +1072,7 @@
         // ---- загрузка из localStorage ----
         function loadData() {
             try {
-                const raw = localStorage.getItem('priority_wishes_v2');
+                const raw = localStorage.getItem('priority_wishes_v3');
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (Array.isArray(parsed) && parsed.length) {
@@ -775,7 +1087,7 @@
 
         // ---- сохранение ----
         function saveData() {
-            localStorage.setItem('priority_wishes_v2', JSON.stringify(wishes));
+            localStorage.setItem('priority_wishes_v3', JSON.stringify(wishes));
         }
 
         // ---- вычисления ----
@@ -792,16 +1104,16 @@
         // ---- тост ----
         let toastTimer = null;
 
-        function showToast(msg, emoji = '✅') {
-            toast.textContent = `${emoji} ${msg}`;
+        function showToast(msg, duration = 2500) {
+            toast.textContent = msg;
             toast.classList.add('show');
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
-            }, 2500);
+            }, duration);
         }
 
-        // ---- получить текст результата для копирования ----
+        // ---- получить текст результата ----
         function getResultText(forKate = false) {
             const sorted = getSorted();
             if (sorted.length === 0) return 'Нет желаний для экспорта.';
@@ -840,13 +1152,12 @@
             return lines.join('\n');
         }
 
-        // ---- копирование в буфер ----
+        // ---- копирование ----
         async function copyText(text, successMsg = 'Скопировано!') {
             try {
                 await navigator.clipboard.writeText(text);
                 showToast(successMsg);
             } catch (_) {
-                // fallback
                 const ta = document.createElement('textarea');
                 ta.value = text;
                 document.body.appendChild(ta);
@@ -857,7 +1168,7 @@
             }
         }
 
-        // ---- поделиться (Telegram/WhatsApp) ----
+        // ---- поделиться ----
         function shareVia(service, text) {
             let url = '';
             if (service === 'tg') {
@@ -867,8 +1178,7 @@
             }
             if (url) {
                 window.open(url, '_blank');
-                // если не открылось — хотя бы копируем
-                copyText(text, 'Скопировано (ссылка не открылась?)');
+                copyText(text, 'Скопировано');
             }
         }
 
@@ -879,11 +1189,20 @@
             });
         }
 
-        // ---- рендер всё ----
+        // ---- рендер шкалы ----
+        function renderScale(current, type, id) {
+            let html = '';
+            for (let i = 1; i <= 10; i++) {
+                const active = i === current ? 'active' : '';
+                html += `<button class="scale-btn ${active}" data-type="${type}" data-id="${id}" data-value="${i}">${i}</button>`;
+            }
+            return html;
+        }
+
+        // ---- рендер ----
         function render() {
             const sorted = getSorted();
 
-            // empty state
             if (wishes.length === 0) {
                 emptyState.style.display = 'block';
                 container.innerHTML = '';
@@ -904,7 +1223,7 @@
                 html += `
                     <div class="wish-card" data-id="${w.id}">
                         <div class="card-header">
-                            <span class="num">Желание №${idx + 1}</span>
+                            <span class="num">✨ Желание №${idx + 1}</span>
                             <button class="del-btn no-print" data-id="${w.id}">✕</button>
                         </div>
 
@@ -957,11 +1276,10 @@
 
             container.innerHTML = html;
 
-            // ---- привязываем события на карточках ----
+            // ---- события на карточках ----
             container.querySelectorAll('.wish-card').forEach(card => {
                 const id = parseInt(card.dataset.id);
 
-                // имя
                 const nameInput = card.querySelector('.wish-input');
                 nameInput.addEventListener('input', () => {
                     const w = wishes.find(x => x.id === id);
@@ -972,7 +1290,6 @@
                     }
                 });
 
-                // кнопки шкалы
                 card.querySelectorAll('.scale-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const type = btn.dataset.type;
@@ -985,7 +1302,6 @@
                     });
                 });
 
-                // удаление
                 const delBtn = card.querySelector('.del-btn');
                 delBtn.addEventListener('click', () => {
                     wishes = wishes.filter(x => x.id !== id);
@@ -1005,16 +1321,6 @@
             }
 
             saveData();
-        }
-
-        // ---- рендер шкалы ----
-        function renderScale(current, type, id) {
-            let html = '';
-            for (let i = 1; i <= 10; i++) {
-                const active = i === current ? 'active' : '';
-                html += `<button class="scale-btn ${active}" data-type="${type}" data-id="${id}" data-value="${i}">${i}</button>`;
-            }
-            return html;
         }
 
         // ---- рендер рейтинга ----
@@ -1042,12 +1348,11 @@
             });
             ratingList.innerHTML = html;
 
-            // совет
             if (sorted.length > 0) {
                 const top = sorted[0];
                 const calc = calcWish(top);
                 const name = top.name || 'Без названия';
-                adviceWish.textContent = `«${name}»`;
+                adviceWish.textContent = `«${name}» (${calc.total} баллов)`;
             } else {
                 adviceWish.textContent = '...';
             }
@@ -1061,4 +1366,141 @@
         }
 
         // ---- добавить желание ----
-        function addWish() {
+        function addWish(name = '') {
+            if (wishes.length >= 20) {
+                showToast('⚠️ Максимум 20 желаний (отсылка к планам на день)', 3000);
+                return;
+            }
+            wishes.push({
+                id: nextId++,
+                name: name || '',
+                happiness: 5,
+                unhappiness: 5,
+                situation: 5,
+            });
+            saveData();
+            render();
+            setTimeout(() => {
+                const inputs = container.querySelectorAll('.wish-input');
+                if (inputs.length) {
+                    inputs[inputs.length - 1].focus();
+                    inputs[inputs.length - 1].select();
+                }
+            }, 100);
+        }
+
+        // ---- пример ----
+        function fillExample() {
+            if (wishes.length > 0) {
+                if (!confirm('Заменить текущие желания на пример?')) return;
+            }
+            wishes = [];
+            nextId = 1;
+            const examples = [
+                { name: 'Купить дом / квартиру', happiness: 9, unhappiness: 8, situation: 2 },
+                { name: 'Выучить английский до B2', happiness: 8, unhappiness: 9, situation: 3 },
+                { name: 'Доход 500 000 ₽ в месяц', happiness: 7, unhappiness: 6, situation: 5 },
+                { name: 'Переехать в другой город', happiness: 6, unhappiness: 7, situation: 4 },
+                { name: 'Открыть свой бизнес', happiness: 8, unhappiness: 5, situation: 6 },
+            ];
+            examples.forEach(ex => {
+                wishes.push({
+                    id: nextId++,
+                    name: ex.name,
+                    happiness: ex.happiness,
+                    unhappiness: ex.unhappiness,
+                    situation: ex.situation,
+                });
+            });
+            saveData();
+            render();
+            showToast('📋 Пример загружен! Оценивай и смотри результат', 2500);
+        }
+
+        // ---- очистка ----
+        function confirmClear() {
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function doClear() {
+            wishes = [];
+            nextId = 1;
+            saveData();
+            render();
+            document.getElementById('confirmModal').classList.remove('active');
+            showToast('🗑 Всё очищено', 2000);
+        }
+
+        // ---- share handlers ----
+        function handleShareCopy() {
+            const text = getResultText(false);
+            copyText(text, '✅ Результат скопирован!');
+        }
+
+        function handleShareSelf() {
+            const text = getResultText(false);
+            shareVia('tg', text);
+        }
+
+        function handleShareKate() {
+            const text = getResultText(true);
+            shareVia('tg', text);
+        }
+
+        // ---- инициализация ----
+        loadData();
+        render();
+
+        // ---- события кнопок ----
+        document.getElementById('addBtn').addEventListener('click', () => addWish());
+        document.getElementById('exampleBtn').addEventListener('click', fillExample);
+        document.getElementById('clearBtn').addEventListener('click', confirmClear);
+        document.getElementById('modalCancel').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.remove('active');
+        });
+        document.getElementById('modalConfirm').addEventListener('click', doClear);
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                document.getElementById('confirmModal').classList.remove('active');
+            }
+        });
+
+        document.getElementById('shareCopy').addEventListener('click', handleShareCopy);
+        document.getElementById('shareSelf').addEventListener('click', handleShareSelf);
+        document.getElementById('shareKate').addEventListener('click', handleShareKate);
+
+        // ---- Ctrl+Enter ----
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                addWish();
+            }
+        });
+
+        // ---- Intersection Observer для анимаций ----
+        const animatedElements = document.querySelectorAll('.animate-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        animatedElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+            observer.observe(el);
+        });
+
+        console.log('🎯 Калькулятор приоритетов загружен!');
+        console.log('💡 Ctrl+Enter — быстро добавить желание');
+        console.log('📊 Желаний:', wishes.length);
+        console.log('🔗 Ссылки на другие инструменты внизу страницы');
+    </script>
+
+</body>
+</html>

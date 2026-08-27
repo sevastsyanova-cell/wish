@@ -213,7 +213,7 @@
             opacity: 1;
         }
 
-        /* ===== ПОЛЕ ВВОДА — 100% РАБОТАЕТ ===== */
+        /* ===== ПОЛЕ ВВОДА — ПРОБЕЛ РАБОТАЕТ ===== */
         .wish-card .wish-input {
             width: 100%;
             background: transparent;
@@ -947,7 +947,7 @@
             <p style="font-size:1.1rem;color:var(--gold-light);font-family:var(--font-heading);">
                 Узнай, чего ты хочешь на самом деле. Перестань тратить силы на чужое. Начни с главного.
             </p>
-            <p style="margin-top:12px;">Этот проект бесплатный.</p>
+            <p style="margin-top:12px;">.</p>
         </div>
     </footer>
 
@@ -965,7 +965,7 @@
 
     <script>
         // ================================================================
-        //  ПОЛНЫЙ JS — КАЛЬКУЛЯТОР ПРИОРИТЕТОВ
+        //  КАЛЬКУЛЯТОР ПРИОРИТЕТОВ — ПРОБЕЛ РАБОТАЕТ!
         // ================================================================
 
         let wishes = [];
@@ -981,7 +981,7 @@
 
         function loadData() {
             try {
-                const raw = localStorage.getItem('priority_wishes_v3');
+                const raw = localStorage.getItem('priority_wishes_v4');
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (Array.isArray(parsed) && parsed.length) {
@@ -995,7 +995,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('priority_wishes_v3', JSON.stringify(wishes));
+            localStorage.setItem('priority_wishes_v4', JSON.stringify(wishes));
         }
 
         function calcWish(w) {
@@ -1100,6 +1100,43 @@
             return html;
         }
 
+        // ---- Обновление только рейтинга и совета (без перерисовки всех карточек) ----
+        function updateRatingAndAdvice() {
+            const sorted = getSorted();
+            if (sorted.length === 0) {
+                ratingSection.classList.remove('visible');
+                return;
+            }
+            ratingSection.classList.add('visible');
+
+            let html = '';
+            sorted.forEach((w, i) => {
+                const calc = calcWish(w);
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+                const fire = calc.total >= 100 ? '🔥🔥🔥' : calc.total >= 60 ? '🔥🔥' : calc.total >= 30 ? '🔥' : '';
+                const name = w.name || 'Без названия';
+                html += `
+                    <div class="rating-item">
+                        <span class="place">${medal}</span>
+                        <span class="r-name">${escHtml(name)}</span>
+                        <span class="r-score">${calc.total}</span>
+                        <span class="r-fire">${fire}</span>
+                    </div>
+                `;
+            });
+            ratingList.innerHTML = html;
+
+            if (sorted.length > 0) {
+                const top = sorted[0];
+                const calc = calcWish(top);
+                const name = top.name || 'Без названия';
+                adviceWish.textContent = `«${name}» (${calc.total} баллов)`;
+            } else {
+                adviceWish.textContent = '...';
+            }
+        }
+
+        // ---- ГЛАВНЫЙ РЕНДЕР (создаёт карточки) ----
         function render() {
             const sorted = getSorted();
 
@@ -1171,6 +1208,7 @@
 
             container.innerHTML = html;
 
+            // ---- ПРИВЯЗКА СОБЫТИЙ (ПРОБЕЛ РАБОТАЕТ!) ----
             container.querySelectorAll('.wish-card').forEach(card => {
                 const id = parseInt(card.dataset.id);
 
@@ -1178,9 +1216,12 @@
                 nameInput.addEventListener('input', function() {
                     const w = wishes.find(x => x.id === id);
                     if (w) {
-                        w.name = this.value;
+                        w.name = this.value;  // ← СОХРАНЯЕТ С ПРОБЕЛАМИ
                         saveData();
-                        render();
+                        // НЕ ПЕРЕРИСОВЫВАЕМ ВСЁ!
+                        updateRatingAndAdvice(); // ← ТОЛЬКО РЕЙТИНГ
+                        // Обновляем результат на этой карточке
+                        updateCardResult(id);
                     }
                 });
 
@@ -1192,7 +1233,7 @@
                         if (!w) return;
                         w[type] = val;
                         saveData();
-                        render();
+                        render(); // ← Здесь можно перерисовать, потому что кнопки меняют всё
                     });
                 });
 
@@ -1204,7 +1245,7 @@
                 });
             });
 
-            renderRating(sorted);
+            updateRatingAndAdvice();
 
             if (wishes.length > 0) {
                 shareSection.classList.add('visible');
@@ -1215,37 +1256,31 @@
             saveData();
         }
 
-        function renderRating(sorted) {
-            if (sorted.length === 0) {
-                ratingSection.classList.remove('visible');
-                return;
-            }
-            ratingSection.classList.add('visible');
+        // ---- Обновление результата на конкретной карточке (без перерисовки всех) ----
+        function updateCardResult(id) {
+            const card = document.querySelector(`.wish-card[data-id="${id}"]`);
+            if (!card) return;
+            const w = wishes.find(x => x.id === id);
+            if (!w) return;
+            const calc = calcWish(w);
+            const resultBlock = card.querySelector('.result-block');
+            const scoreEl = card.querySelector('.score');
+            const cryEl = card.querySelector('.cry');
+            const shrugEl = card.querySelector('.shrug');
 
-            let html = '';
-            sorted.forEach((w, i) => {
-                const calc = calcWish(w);
-                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
-                const fire = calc.total >= 100 ? '🔥🔥🔥' : calc.total >= 60 ? '🔥🔥' : calc.total >= 30 ? '🔥' : '';
-                const name = w.name || 'Без названия';
-                html += `
-                    <div class="rating-item">
-                        <span class="place">${medal}</span>
-                        <span class="r-name">${escHtml(name)}</span>
-                        <span class="r-score">${calc.total}</span>
-                        <span class="r-fire">${fire}</span>
-                    </div>
-                `;
-            });
-            ratingList.innerHTML = html;
-
-            if (sorted.length > 0) {
-                const top = sorted[0];
-                const calc = calcWish(top);
-                const name = top.name || 'Без названия';
-                adviceWish.textContent = `«${name}» (${calc.total} баллов)`;
+            if (calc.total > 0 || calc.h > 0 || calc.uh > 0 || calc.s > 0) {
+                resultBlock.classList.add('visible');
+                if (scoreEl) {
+                    scoreEl.textContent = calc.total > 0 ? `🎯 ${calc.total} баллов` : '🎯 0 баллов';
+                }
+                if (cryEl) {
+                    cryEl.textContent = calc.total > 0 ? `📖 ${calc.total} — это не просто число. Это крик души. Или подсознания. Кто теперь разберёт...` : '';
+                }
+                if (shrugEl) {
+                    shrugEl.textContent = calc.total > 0 ? '🤷‍♀️' : '🤷‍♀️ Попробуй изменить оценки';
+                }
             } else {
-                adviceWish.textContent = '...';
+                resultBlock.classList.remove('visible');
             }
         }
 
@@ -1380,7 +1415,7 @@
 
         console.log('🎯 Калькулятор приоритетов загружен!');
         console.log('💡 Ctrl+Enter — быстро добавить желание');
-        console.log('📱 На телефоне поле ввода работает!');
+        console.log('📱 Пробел работает!');
     </script>
 </body>
 </html>

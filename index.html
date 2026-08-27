@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Калькулятор приоритетов</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f7f5f0;
+            --surface: #ffffff;
+            --text: #1e1e1e;
+            --text-muted: #666;
+            --border: #ddd;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --accent: #2d7a5a;
+            --accent-light: #e6f2ed;
+            --accent-hover: #23694a;
+            --danger: #c0392b;
+            --danger-light: #fbe9e7;
+            --radius: 12px;
+            --transition: 0.25s ease;
+            --max-w: 820px;
+            --btn-scale: 0.96;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1e;
+            --surface: #26262b;
+            --text: #eee;
+            --text-muted: #aaa;
+            --border: #3a3a40;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --accent: #4caf84;
+            --accent-light: #1e3a30;
+            --accent-hover: #5cbf94;
+            --danger: #e57373;
+            --danger-light: #3d1e1e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px 16px 60px;
+            transition: background var(--transition), color var(--transition);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: var(--max-w);
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px 20px;
+            margin-bottom: 8px;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-left h1 span {
+            background: var(--accent);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 2px 12px;
+            border-radius: 40px;
+        }
+
+        .header-left .sub {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.1s, box-shadow var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+        .btn-danger:hover {
+            filter: brightness(1.08);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+        }
+
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: #fff;
+            border-color: #27ae60;
+        }
+        .btn-success:hover {
+            background: #219a52;
+            border-color: #219a52;
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            color: var(--text);
+            transition: background var(--transition);
+            min-width: 40px;
+        }
+        .theme-toggle:hover {
+            background: var(--border);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            color: var(--text);
+            padding: 12px 28px;
+            border-radius: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            font-size: 15px;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== WISH CARD ===== */
+        .wish-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 12px var(--shadow);
+            padding: 20px 22px 18px;
+            margin-bottom: 20px;
+            transition: background var(--transition), box-shadow var(--transition);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .wish-card .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+
+        .wish-card .card-header .num {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .wish-card .card-header .del-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            transition: background var(--transition), color var(--transition);
+            opacity: 0.3;
+        }
+        .wish-card .card-header .del-btn:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+            opacity: 1;
+        }
+
+        .wish-card .wish-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--border);
+            font-size: 18px;
+            padding: 6px 2px 8px;
+            color: var(--text);
+            transition: border-color var(--transition);
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+        .wish-card .wish-input:focus {
+            outline: none;
+            border-bottom-color: var(--accent);
+        }
+        .wish-card .wish-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+            opacity: 0.5;
+        }
+
+        /* вопросы */
+        .question-block {
+            margin-bottom: 16px;
+        }
+
+        .question-block .q-label {
+            font-weight: 600;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .question-block .q-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .scale-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .scale-buttons .scale-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scale-buttons .scale-btn:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        .scale-buttons .scale-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(45, 122, 90, 0.3);
+        }
+
+        /* ===== РЕЗУЛЬТАТ КАРТОЧКИ ===== */
+        .result-block {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 2px dashed var(--border);
+            display: none;
+        }
+        .result-block.visible {
+            display: block;
+        }
+
+        .result-block .magic-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .result-block .score {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 6px 0 8px;
+            letter-spacing: -1px;
+        }
+
+        .result-block .score .emoji-big {
+            font-size: 36px;
+        }
+
+        .result-block .magic-text {
+            font-size: 15px;
+            color: var(--text);
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+        .result-block .magic-text .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .result-block .cry {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .result-block .shrug {
+            font-size: 24px;
+            margin-top: 2px;
+        }
+
+        /* ===== КНОПКИ ДОБАВИТЬ / ПРИМЕР / ОЧИСТИТЬ ===== */
+        .actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 24px;
+            padding: 4px 0;
+        }
+
+        /* ===== РЕЙТИНГ ===== */
+        .rating-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 22px 18px;
+            border: 1px solid var(--border);
+            margin-top: 8px;
+            display: none;
+        }
+        .rating-section.visible {
+            display: block;
+        }
+
+        .rating-section .rating-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .rating-item:last-child {
+            border-bottom: none;
+        }
+
+        .rating-item .place {
+            font-size: 22px;
+            min-width: 36px;
+        }
+        .rating-item .r-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        .rating-item .r-score {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent);
+            min-width: 60px;
+            text-align: right;
+        }
+        .rating-item .r-fire {
+            font-size: 18px;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .rating-section .advice {
+            margin-top: 14px;
+            padding: 14px 18px;
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
+            font-size: 15px;
+        }
+        .rating-section .advice strong {
+            color: var(--accent);
+        }
+
+        /* ===== ПОДЕЛИТЬСЯ ===== */
+        .share-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 18px 22px 20px;
+            border: 1px solid var(--border);
+            margin-top: 16px;
+            display: none;
+        }
+        .share-section.visible {
+            display: block;
+        }
+
+        .share-section .share-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .share-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* ===== ССЫЛКИ НА ДРУГИЕ ИНСТРУМЕНТЫ ===== */
+        .links-section {
+            margin-top: 30px;
+            padding: 18px 22px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .links-section .links-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .links-section a {
+            color: var(--accent);
+            text-decoration: none;
+            display: block;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+        .links-section a:hover {
+            text-decoration: underline;
+        }
+        .links-section .author {
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+        .links-section .author strong {
+            color: var(--text);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .empty-state .big {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .empty-state h3 {
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .empty-state p {
+            font-size: 15px;
+        }
+
+        /* ===== MODAL (confirm) ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 32px 28px 24px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .modal-box h3 {
+            margin-bottom: 8px;
+        }
+        .modal-box p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .header-left h1 {
+                font-size: 22px;
+                flex-wrap: wrap;
+            }
+            .wish-card {
+                padding: 16px 14px 14px;
+            }
+            .scale-buttons .scale-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            .result-block .score {
+                font-size: 32px;
+            }
+            .rating-item .r-score {
+                font-size: 16px;
+                min-width: 48px;
+            }
+            .share-buttons .btn {
+                font-size: 13px;
+                padding: 6px 14px;
+            }
+            .actions-bar .btn {
+                font-size: 13px;
+                padding: 6px 14px;
+            }
+            .question-block .q-label {
+                font-size: 14px;
+            }
+        }
+
+        @media print {
+            .header-actions,
+            .actions-bar,
+            .share-section .share-buttons,
+            .theme-toggle,
+            .no-print,
+            .del-btn {
+                display: none !important;
+            }
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                padding: 10px !important;
+            }
+            .wish-card {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .scale-btn {
+                border: 1px solid #aaa !important;
+                background: #f5f5f5 !important;
+            }
+            .scale-btn.active {
+                background: #2d7a5a !important;
+                color: #fff !important;
+            }
+            .result-block {
+                display: block !important;
+            }
+            .rating-section {
+                display: block !important;
+                border: 1px solid #ccc !important;
+            }
+            .share-section {
+                display: none !important;
+            }
+            .links-section {
+                border: 1px solid #ccc !important;
+            }
+            [data-theme="dark"] .wish-card {
+                border-color: #000 !important;
+            }
+            [data-theme="dark"] .rating-section {
+                border-color: #000 !important;
+            }
+            .empty-state {
+                border: 1px solid #ccc !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- TOAST -->
+        <div class="toast" id="toast"></div>
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h1>
+                    🎯 Калькулятор приоритетов
+                    <span>v1</span>
+                </h1>
+                <div class="sub">«Без иллюзий и самообмана»</div>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Переключить тему">🌙</button>
+            </div>
+        </header>
+
+        <!-- ACTIONS -->
+        <div class="actions-bar no-print">
+            <button class="btn btn-primary" id="addBtn">➕ Добавить желание</button>
+            <button class="btn btn-outline" id="exampleBtn">📋 Пример</button>
+            <button class="btn btn-danger" id="clearBtn">🗑 Очистить всё</button>
+        </div>
+
+        <!-- WISHES CONTAINER -->
+        <div id="wishesContainer"></div>
+
+        <!-- EMPTY STATE (показывается через JS) -->
+        <div class="empty-state" id="emptyState">
+            <div class="big">✨</div>
+            <h3>Нет желаний</h3>
+            <p>Нажми «➕ Добавить желание» или «📋 Пример», чтобы начать</p>
+        </div>
+
+        <!-- RATING SECTION -->
+        <div class="rating-section" id="ratingSection">
+            <div class="rating-title">📊 Твой рейтинг желаний</div>
+            <div id="ratingList"></div>
+            <div class="advice" id="adviceBlock">
+                💡 Совет: начни с <strong id="adviceWish">...</strong> — у него самый высокий приоритет
+            </div>
+        </div>
+
+        <!-- SHARE SECTION -->
+        <div class="share-section no-print" id="shareSection">
+            <div class="share-title">📤 Поделиться результатом</div>
+            <div class="share-buttons">
+                <button class="btn btn-outline" id="shareCopy">📋 Копировать всё</button>
+                <button class="btn btn-outline" id="shareSelf">📱 Переслать себе</button>
+                <button class="btn btn-outline" id="shareKate">👩‍💼 Переслать Кате</button>
+            </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="links-section no-print">
+            <div class="links-title">🔗 Ещё инструменты</div>
+            <a href="https://sevastsyanova-cell.github.io/discharge/" target="_blank">
+                🧹 Практика-разгрузка — «Как за 10 минут навести порядок в голове»
+            </a>
+            <a href="https://sevastsyanova-cell.github.io/avtorizaz/" target="_blank">
+                📊 Авторизация результатов — «Зафиксируй свой прогресс»
+            </a>
+            <div class="author">
+                💌 <strong>@katerinasevastsyanova</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <h3>⚠️ Очистить всё?</h3>
+            <p>Все желания и оценки будут удалены безвозвратно.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="modalCancel">Отмена</button>
+                <button class="btn btn-danger" id="modalConfirm">Да, очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  ПОЛНЫЙ JS — КАЛЬКУЛЯТОР ПРИОРИТЕТОВ
+        // ================================================================
+
+        // ---- состояние ----
+        let wishes = [];
+        let nextId = 1;
+
+        // ---- DOM ----
+        const container = document.getElementById('wishesContainer');
+        const emptyState = document.getElementById('emptyState');
+        const ratingSection = document.getElementById('ratingSection');
+        const ratingList = document.getElementById('ratingList');
+        const adviceWish = document.getElementById('adviceWish');
+        const shareSection = document.getElementById('shareSection');
+        const toast = document.getElementById('toast');
+
+        // ---- загрузка из localStorage ----
+        function loadData() {
+            try {
+                const raw = localStorage.getItem('priority_wishes_v2');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        wishes = parsed;
+                        nextId = Math.max(...parsed.map(w => w.id), 0) + 1;
+                        return true;
+                    }
+                }
+            } catch (_) { /* ignore */ }
+            return false;
+        }
+
+        // ---- сохранение ----
+        function saveData() {
+            localStorage.setItem('priority_wishes_v2', JSON.stringify(wishes));
+        }
+
+        // ---- вычисления ----
+        function calcWish(w) {
+            const h = Math.min(10, Math.max(1, Number(w.happiness) || 1));
+            const uh = Math.min(10, Math.max(1, Number(w.unhappiness) || 1));
+            const s = Math.min(10, Math.max(1, Number(w.situation) || 1));
+            const sum = h + uh;
+            const gap = 10 - s;
+            const total = sum * gap;
+            return { h, uh, s, sum, gap, total };
+        }
+
+        // ---- тост ----
+        let toastTimer = null;
+
+        function showToast(msg, emoji = '✅') {
+            toast.textContent = `${emoji} ${msg}`;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // ---- получить текст результата для копирования ----
+        function getResultText(forKate = false) {
+            const sorted = getSorted();
+            if (sorted.length === 0) return 'Нет желаний для экспорта.';
+
+            let lines = [];
+            lines.push('🧙‍♀️ Мой рейтинг желаний (Калькулятор приоритетов)');
+            lines.push('');
+            sorted.forEach((w, i) => {
+                const calc = calcWish(w);
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+                const fire = calc.total >= 100 ? '🔥🔥🔥' : calc.total >= 60 ? '🔥🔥' : calc.total >= 30 ? '🔥' : '';
+                const name = w.name || 'Без названия';
+                lines.push(`${medal} ${name} — ${calc.total} баллов ${fire}`);
+            });
+
+            const top = sorted[0];
+            if (top) {
+                const calc = calcWish(top);
+                const name = top.name || 'Без названия';
+                lines.push('');
+                lines.push(`💡 Совет: начни с «${name}» — у него самый высокий приоритет (${calc.total} баллов)`);
+            }
+
+            lines.push('');
+            lines.push('🧙‍♀️ Это чистая магия моего подсознания.');
+            lines.push('Но если серьёзно, то просто математика, которую посчитали за меня.');
+            lines.push('И она не врёт.');
+            lines.push('');
+            lines.push('🔗 Сделано в Калькуляторе приоритетов');
+
+            if (forKate) {
+                lines.push('');
+                lines.push('👩‍💼 Для Кати 💌');
+            }
+
+            return lines.join('\n');
+        }
+
+        // ---- копирование в буфер ----
+        async function copyText(text, successMsg = 'Скопировано!') {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(successMsg);
+            } catch (_) {
+                // fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast(successMsg);
+            }
+        }
+
+        // ---- поделиться (Telegram/WhatsApp) ----
+        function shareVia(service, text) {
+            let url = '';
+            if (service === 'tg') {
+                url = `https://t.me/share/url?url=&text=${encodeURIComponent(text)}`;
+            } else if (service === 'wa') {
+                url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            }
+            if (url) {
+                window.open(url, '_blank');
+                // если не открылось — хотя бы копируем
+                copyText(text, 'Скопировано (ссылка не открылась?)');
+            }
+        }
+
+        // ---- сортировка ----
+        function getSorted() {
+            return [...wishes].sort((a, b) => {
+                return calcWish(b).total - calcWish(a).total;
+            });
+        }
+
+        // ---- рендер всё ----
+        function render() {
+            const sorted = getSorted();
+
+            // empty state
+            if (wishes.length === 0) {
+                emptyState.style.display = 'block';
+                container.innerHTML = '';
+                ratingSection.classList.remove('visible');
+                shareSection.classList.remove('visible');
+                saveData();
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            // ---- карточки ----
+            let html = '';
+            wishes.forEach((w, idx) => {
+                const calc = calcWish(w);
+                const hasResult = calc.total > 0 || (calc.h > 0 || calc.uh > 0 || calc.s > 0);
+                const resultVisible = hasResult;
+
+                html += `
+                    <div class="wish-card" data-id="${w.id}">
+                        <div class="card-header">
+                            <span class="num">Желание №${idx + 1}</span>
+                            <button class="del-btn no-print" data-id="${w.id}">✕</button>
+                        </div>
+
+                        <input type="text" class="wish-input" value="${escHtml(w.name || '')}" placeholder="Напиши своё желание..." />
+
+                        <!-- Вопрос 1 -->
+                        <div class="question-block">
+                            <span class="q-label">😊 Вопрос 1. Насколько я буду счастлива по шкале от 1 до 10, если у меня это будет?</span>
+                            <span class="q-hint">где 1 — совсем несчастлива, 10 — совершенно счастлива</span>
+                            <div class="scale-buttons" data-type="happiness" data-id="${w.id}">
+                                ${renderScale(calc.h, 'happiness', w.id)}
+                            </div>
+                        </div>
+
+                        <!-- Вопрос 2 -->
+                        <div class="question-block">
+                            <span class="q-label">😢 Вопрос 2. Насколько я буду несчастна по шкале от 1 до 10, если у меня этого не будет, если желание не исполнится?</span>
+                            <span class="q-hint">где 1 — переживу, 10 — совершенно несчастна</span>
+                            <div class="scale-buttons" data-type="unhappiness" data-id="${w.id}">
+                                ${renderScale(calc.uh, 'unhappiness', w.id)}
+                            </div>
+                        </div>
+
+                        <!-- Вопрос 3 -->
+                        <div class="question-block">
+                            <span class="q-label">📌 Вопрос 3. Объективная ситуация на данный момент. Насколько я уже близка к реализации?</span>
+                            <span class="q-hint">где 1 — не имею представления как это исполнится, 10 — понимаю как оно может решиться или исполниться. Знаю как реализовать.</span>
+                            <div class="scale-buttons" data-type="situation" data-id="${w.id}">
+                                ${renderScale(calc.s, 'situation', w.id)}
+                            </div>
+                        </div>
+
+                        <!-- РЕЗУЛЬТАТ -->
+                        <div class="result-block ${resultVisible ? 'visible' : ''}">
+                            <div class="magic-title">🧙‍♀️ После магических исчислений получилось:</div>
+                            <div class="score">
+                                ${calc.total > 0 ? `🎯 ${calc.total} баллов` : '🎯 0 баллов'}
+                            </div>
+                            <div class="magic-text">
+                                🧙‍♀️ Это чистая магия твоего подсознания.<br />
+                                Но если серьёзно, то просто математика, которую посчитали за тебя.<br />
+                                И она не врёт.
+                            </div>
+                            ${calc.total > 0 ? `<div class="cry">📖 ${calc.total} — это не просто число. Это крик души. Или подсознания. Кто теперь разберёт...</div>` : ''}
+                            <div class="shrug">${calc.total > 0 ? '🤷‍♀️' : '🤷‍♀️ Попробуй изменить оценки'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // ---- привязываем события на карточках ----
+            container.querySelectorAll('.wish-card').forEach(card => {
+                const id = parseInt(card.dataset.id);
+
+                // имя
+                const nameInput = card.querySelector('.wish-input');
+                nameInput.addEventListener('input', () => {
+                    const w = wishes.find(x => x.id === id);
+                    if (w) {
+                        w.name = nameInput.value.trim();
+                        saveData();
+                        render();
+                    }
+                });
+
+                // кнопки шкалы
+                card.querySelectorAll('.scale-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const type = btn.dataset.type;
+                        const val = parseInt(btn.dataset.value);
+                        const w = wishes.find(x => x.id === id);
+                        if (!w) return;
+                        w[type] = val;
+                        saveData();
+                        render();
+                    });
+                });
+
+                // удаление
+                const delBtn = card.querySelector('.del-btn');
+                delBtn.addEventListener('click', () => {
+                    wishes = wishes.filter(x => x.id !== id);
+                    saveData();
+                    render();
+                });
+            });
+
+            // ---- рейтинг ----
+            renderRating(sorted);
+
+            // ---- поделиться ----
+            if (wishes.length > 0) {
+                shareSection.classList.add('visible');
+            } else {
+                shareSection.classList.remove('visible');
+            }
+
+            saveData();
+        }
+
+        // ---- рендер шкалы ----
+        function renderScale(current, type, id) {
+            let html = '';
+            for (let i = 1; i <= 10; i++) {
+                const active = i === current ? 'active' : '';
+                html += `<button class="scale-btn ${active}" data-type="${type}" data-id="${id}" data-value="${i}">${i}</button>`;
+            }
+            return html;
+        }
+
+        // ---- рендер рейтинга ----
+        function renderRating(sorted) {
+            if (sorted.length === 0) {
+                ratingSection.classList.remove('visible');
+                return;
+            }
+            ratingSection.classList.add('visible');
+
+            let html = '';
+            sorted.forEach((w, i) => {
+                const calc = calcWish(w);
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+                const fire = calc.total >= 100 ? '🔥🔥🔥' : calc.total >= 60 ? '🔥🔥' : calc.total >= 30 ? '🔥' : '';
+                const name = w.name || 'Без названия';
+                html += `
+                    <div class="rating-item">
+                        <span class="place">${medal}</span>
+                        <span class="r-name">${escHtml(name)}</span>
+                        <span class="r-score">${calc.total}</span>
+                        <span class="r-fire">${fire}</span>
+                    </div>
+                `;
+            });
+            ratingList.innerHTML = html;
+
+            // совет
+            if (sorted.length > 0) {
+                const top = sorted[0];
+                const calc = calcWish(top);
+                const name = top.name || 'Без названия';
+                adviceWish.textContent = `«${name}»`;
+            } else {
+                adviceWish.textContent = '...';
+            }
+        }
+
+        // ---- экранирование ----
+        function escHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        // ---- добавить желание ----
+        function addWish() {
